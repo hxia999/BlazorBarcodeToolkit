@@ -1,0 +1,38 @@
+﻿@inject IJSRuntime JSRuntime
+<div @ref =_barcode>
+</div>
+@code
+{
+    private ElementReference _barcode;
+    [Parameter] public string Text { get; set; } = string.Empty;
+    [Parameter] public BarcodeFormat Format { get; set; } = BarcodeFormat.QR_CODE;
+    [Parameter] public BarcodeECCLevel ECCLevel { get; set; } = BarcodeECCLevel.Default;
+    [Parameter] public BarcodeEncoding Encoding { get; set; } = BarcodeEncoding.UTF_8;
+    [Parameter] public int Margin { get; set; } = 10;
+    [Parameter] public int Width { get; set; } = 200;
+    [Parameter] public int Height { get; set; } = 200;
+   
+    private IJSObjectReference? module;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {  
+        if (firstRender)
+        {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorBarcodeToolkit/zxing_writer.js");
+
+        }
+
+        if(module is not null)
+        {
+            string? format = Enum.GetName(Format)?.Replace('_','-');  
+            string? encoding = Enum.GetName(Encoding)?.Replace('_','-');
+
+            await module.InvokeVoidAsync("generateBarcode", Text, format, encoding, ECCLevel.GetHashCode(), Margin, Width, Height, _barcode);
+   
+        }
+    }
+
+
+
+        
+    
+}
