@@ -1,0 +1,40 @@
+﻿@inject IJSRuntime JSRuntime
+<canvas id="canvas"  />
+
+<style>
+    #canvas
+    {   
+        
+        height: inherit;
+        width: inherit;
+
+    }
+</style>
+
+@code {
+    [Parameter] public BarcodeCamera? Camera { get; set; } = BarcodeCamera.environment;
+    [Parameter] public BarcodeFormat Format { get; set; } = BarcodeFormat.QR_CODE;
+
+
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorBarcodeToolkit/zxing_reader.js");
+
+            string? camera = Camera .HasValue ? "" : Enum.GetName(Camera.Value);
+            var formate = Enum.GetName(Format).Replace('_','-');
+            await module.InvokeVoidAsync("loadVideo", camera,formate);
+        }
+        if (module is not null)
+        {
+
+
+            //await module.InvokeVoidAsync("generateBarcode","123","QR-CODE","UTF_8",-1,10,200,200,"barcodeWriter");
+        }
+    }
+    [JSInvokable]
+    public static string GetBarcode(string name) => $"From C#, {name}!";
+}
