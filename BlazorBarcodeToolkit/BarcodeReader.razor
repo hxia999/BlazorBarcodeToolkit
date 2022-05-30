@@ -24,8 +24,8 @@
         {
             module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorBarcodeToolkit/zxing_reader.js");
 
-            string camera =   Enum.GetName(Camera);
-            string formate = Enum.GetName(Format).Replace('_','-');
+            string? camera =   Enum.GetName(Camera);
+            string? formate = Enum.GetName(Format)?.Replace('_','-');
             await module.InvokeVoidAsync("loadVideo", camera,formate);
         }
         if (module is not null)
@@ -35,6 +35,8 @@
             //await module.InvokeVoidAsync("generateBarcode","123","QR-CODE","UTF_8",-1,10,200,200,"barcodeWriter");
         }
     }
+
+   
     [JSInvokable]
-    public static  string GetBarcode(string name) => $"From C#, {name}!";
+    public static  string GetBarcode(string name) =>  $"From C#, {name}!";
 }
