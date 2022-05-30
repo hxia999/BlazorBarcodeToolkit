@@ -12,7 +12,7 @@
 </style>
 
 @code {
-    [Parameter] public BarcodeCamera? Camera { get; set; } = BarcodeCamera.environment;
+    [Parameter] public BarcodeCamera Camera { get; set; } = BarcodeCamera.environment;
     [Parameter] public BarcodeFormat Format { get; set; } = BarcodeFormat.QR_CODE;
 
 
@@ -24,8 +24,8 @@
         {
             module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorBarcodeToolkit/zxing_reader.js");
 
-            string? camera = Camera .HasValue ? "" : Enum.GetName(Camera.Value);
-            var formate = Enum.GetName(Format).Replace('_','-');
+            string camera =   Enum.GetName(Camera);
+            string formate = Enum.GetName(Format).Replace('_','-');
             await module.InvokeVoidAsync("loadVideo", camera,formate);
         }
         if (module is not null)
@@ -36,5 +36,5 @@
         }
     }
     [JSInvokable]
-    public static string GetBarcode(string name) => $"From C#, {name}!";
+    public static  string GetBarcode(string name) => $"From C#, {name}!";
 }
